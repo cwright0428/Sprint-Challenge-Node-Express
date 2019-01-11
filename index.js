@@ -112,6 +112,40 @@ server.put('/api/projects/:id', (req, res) => {
         })
 })
 
+
+server.delete('/api/actions/:id', (req,res) =>{
+    dba.remove(req.params.id,)
+    .then(response => {
+        res.status(200).json(response)
+    })
+    .catch(error =>{
+        res.status(400).json({message:"Action not deleted"})
+    })
+})
+
+
+server.delete('/api/projects/:id', (req,res) =>{
+    dbp.remove(req.params.id,)
+    .then(response => {
+        res.status(200).json(response)
+    })
+    .catch(error =>{
+        res.status(400).json({message:"Project not deleted"})
+    })
+})
+
+
+server.get("/api/projects/:id/actions", (req, res) => {
+    const id = req.params.id;
+    dbp
+      .getProjectActions(id)
+      .then(posts => {
+        res.status(200).json(posts);
+      })
+      .catch(err => {
+        res.status(400).json({ message: "Not found" });
+      });
+  });
 /*server.put("/api/post", (req, res) => {
     const id = req.params.id;
     const post = req.body;
