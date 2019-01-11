@@ -14,7 +14,7 @@ that the one of the largest parts of express is actually middleware, what expres
 
 ## What is Middleware?
 
-software that extends the functionaility of other software in the case of express, it's the functions that are ran in the order that they'rw introduced
+software that extends the functionaility of other software in the case of express, it's the functions that are ran in the order that they're` introduced
 
 
 ## What is a Resource?
