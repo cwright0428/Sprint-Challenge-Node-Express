@@ -63,28 +63,26 @@ server.post("/api/actions", async (req, res) => {
   }
 });
 
-server.post("/api/projects", (req, res) => {
-  dbp
-    .insert(req.body)
-    .then(result => {
-      res.status(200).json(result);
-    })
-    .catch(error => {
-      res.status(500).json({ error: "The project(s) couldn't be added." });
-    });
+server.post("/api/projects", async (req, res) => {
+  try {
+    const addProject = await dbp.insert(req.body);
+    res.status(200).json(addProject);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "The project(s) couldn't be added." });
+  }
 });
 
-server.put("/api/actions/:id", (req, res) => {
-  dba
-    .update(req.params.id, req.body)
-    .then(response => {
-      res.status(200).json(response);
-    })
-    .catch(error => {
-      res
-        .status(500)
-        .json({ error: "This action can't be updated at this time." });
-    });
+server.put("/api/actions/:id", async (req, res) => {
+  try {
+    const edits = await dba.update(req.params.id, req.body);
+    res.status(200).json(edits);
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ error: "This action can't be updated at this time." });
+  }
 });
 
 server.put("/api/projects/:id", (req, res) => {
@@ -122,16 +120,14 @@ server.delete("/api/projects/:id", (req, res) => {
     });
 });
 
-server.get("/api/projects/:id/actions", (req, res) => {
-  const id = req.params.id;
-  dbp
-    .getProjectActions(id)
-    .then(posts => {
-      res.status(200).json(posts);
-    })
-    .catch(err => {
-      res.status(400).json({ message: "Not found" });
-    });
+server.get("/api/projects/:id/actions", async (req, res) => {
+  try {
+    const id = await dbp.getProjectActions(req.params.id);
+    res.status(200).json(id);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Not found" });
+  }
 });
 /*server.put("/api/post", (req, res) => {
     const id = req.params.id;
