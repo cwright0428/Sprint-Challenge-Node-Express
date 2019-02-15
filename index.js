@@ -31,41 +31,36 @@ server.get("/api/actions", async (req, res) => {
 });
 
 //GET actions endpoint with ID
-server.get("/api/projects/:id", (req, res) => {
-  const id = req.params.id;
-  dbp
-    .get(id)
-    .then(posts => {
-      res.status(200).json(posts);
-    })
-    .catch(err => {
-      res.status(400).json({ message: "Not found" });
-    });
+server.get("/api/projects/:id", async (req, res) => {
+  try {
+    const id = await dbp.get(req.params.id);
+    res.status(200).json(id);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Not found" });
+  }
 });
 
 //GET actions endpoint with ID
-server.get("/api/actions/:id", (req, res) => {
-  const id = req.params.id;
-  dba
-    .get(id)
-    .then(actions => {
-      res.status(200).json(actions);
-    })
-    .catch(err => {
-      res.status(400).json({ message: "Server Error" });
-    });
+server.get("/api/actions/:id", async (req, res) => {
+  try {
+    const id = await dba.get(req.paarams.id);
+    res.status(200).json(id);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Server Error" });
+  }
 });
 
 //Post endpoints
-server.post("/api/actions", (req, res) => {
-  dba
-    .insert(req.body)
-    .then(result => {
-      res.status(200).json(result);
-    })
-    .catch(error => {
-      res.status(500).json({ error: "The action(s) couldn't be added." });
-    });
+server.post("/api/actions", async (req, res) => {
+  try {
+    const addAction = await dba.insert(req.body);
+    res.status(200).json(addAction);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "The action(s) couldn't be added." });
+  }
 });
 
 server.post("/api/projects", (req, res) => {
