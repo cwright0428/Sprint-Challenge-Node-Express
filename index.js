@@ -10,142 +10,125 @@ server.get("/", (req, res) => {
 });
 
 //GET Projects endpoint
-server.get("/api/projects", (req, res) => {
-  dbp
-    .get()
-    .then(posts => {
-      res.status(200).json(posts);
-    })
-    .catch(err => {
-      res.status(400).json({ message: "Server Error" });
-    });
+server.get("/api/projects", async (req, res) => {
+  try {
+    const projects = await dbp.get();
+    res.status(200).json(projects);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server Error" });
+  }
 });
 
 //GET actions endpoint
-server.get("/api/actions", (req, res) => {
-  dba
-    .get()
-    .then(actions => {
-      res.status(200).json(actions);
-    })
-    .catch(err => {
-      res.status(400).json({ message: "Server Error" });
-    });
+server.get("/api/actions", async (req, res) => {
+  try {
+    const actions = await dba.get();
+    res.status(200).json(actions);
+  } catch (error) {
+    res.status(400).json({ message: "Server Error" });
+  }
 });
 
 //GET actions endpoint with ID
-server.get("/api/projects/:id", (req, res) => {
-  const id = req.params.id;
-  dbp
-    .get(id)
-    .then(posts => {
-      res.status(200).json(posts);
-    })
-    .catch(err => {
-      res.status(400).json({ message: "Not found" });
-    });
+server.get("/api/projects/:id", async (req, res) => {
+  try {
+    const id = await dbp.get(req.params.id);
+    res.status(200).json(id);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Not found" });
+  }
 });
 
 //GET actions endpoint with ID
-server.get("/api/actions/:id", (req, res) => {
-  const id = req.params.id;
-  dba
-    .get(id)
-    .then(actions => {
-      res.status(200).json(actions);
-    })
-    .catch(err => {
-      res.status(400).json({ message: "Server Error" });
-    });
+server.get("/api/actions/:id", async (req, res) => {
+  try {
+    const id = await dba.get(req.paarams.id);
+    res.status(200).json(id);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Server Error" });
+  }
 });
 
 //Post endpoints
-server.post("/api/actions", (req, res) => {
-  dba
-    .insert(req.body)
-    .then(result => {
-      res.status(200).json(result);
-    })
-    .catch(error => {
-      res.status(500).json({ error: "The action(s) couldn't be added." });
-    });
+server.post("/api/actions", async (req, res) => {
+  try {
+    const addAction = await dba.insert(req.body);
+    res.status(200).json(addAction);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "The action(s) couldn't be added." });
+  }
 });
 
-server.post("/api/projects", (req, res) => {
+server.post("/api/projects", async (req, res) => {
+  try {
+    const addProject = await dbp.insert(req.body);
+    res.status(200).json(addProject);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "The project(s) couldn't be added." });
+  }
+});
+
+server.put("/api/actions/:id", async (req, res) => {
+  try {
+    const edits = await dba.update(req.params.id, req.body);
+    res.status(200).json(edits);
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ error: "This action can't be updated at this time." });
+  }
+});
+
+server.put("/api/projects/:id", (req, res) => {
   dbp
-    .insert(req.body)
-    .then(result => {
-      res.status(200).json(result);
+    .update(req.params.id, req.body)
+    .then(response => {
+      res.status(200).json(response);
     })
     .catch(error => {
-      res.status(500).json({ error: "The project(s) couldn't be added." });
+      res
+        .status(500)
+        .json({ error: "This project can't be updated at this time." });
     });
 });
 
-
-server.put('/api/actions/:id', (req, res) => {
-    dba.update(req.params.id, req.body)
-        .then(response => {
-           res
-                .status(200)
-                .json(response)
-        })
-        .catch(error => {
-            res
-                .status(500)
-                .json({error: "This action can't be updated at this time." })
-        })
+server.delete("/api/actions/:id", (req, res) => {
+  dba
+    .remove(req.params.id)
+    .then(response => {
+      res.status(200).json(response);
+    })
+    .catch(error => {
+      res.status(400).json({ message: "Action not deleted" });
+    });
 });
 
-
-server.put('/api/projects/:id', (req, res) => {
-    dbp.update(req.params.id, req.body)
-        .then(response => {
-            res
-                .status(200)
-                .json(response)
-        })
-        .catch(error => {
-            res
-                .status(500)
-                .json({error: "This project can't be updated at this time." })
-        })
-})
-
-
-server.delete('/api/actions/:id', (req,res) =>{
-    dba.remove(req.params.id,)
+server.delete("/api/projects/:id", (req, res) => {
+  dbp
+    .remove(req.params.id)
     .then(response => {
-        res.status(200).json(response)
+      res.status(200).json(response);
     })
-    .catch(error =>{
-        res.status(400).json({message:"Action not deleted"})
-    })
-})
+    .catch(error => {
+      res.status(400).json({ message: "Project not deleted" });
+    });
+});
 
-
-server.delete('/api/projects/:id', (req,res) =>{
-    dbp.remove(req.params.id,)
-    .then(response => {
-        res.status(200).json(response)
-    })
-    .catch(error =>{
-        res.status(400).json({message:"Project not deleted"})
-    })
-})
-
-
-server.get("/api/projects/:id/actions", (req, res) => {
-    const id = req.params.id;
-    dbp
-      .getProjectActions(id)
-      .then(posts => {
-        res.status(200).json(posts);
-      })
-      .catch(err => {
-        res.status(400).json({ message: "Not found" });
-      });
-  });
+server.get("/api/projects/:id/actions", async (req, res) => {
+  try {
+    const id = await dbp.getProjectActions(req.params.id);
+    res.status(200).json(id);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Not found" });
+  }
+});
 /*server.put("/api/post", (req, res) => {
     const id = req.params.id;
     const post = req.body;
